@@ -1,0 +1,8 @@
+fastapi==0.115.6
+uvicorn[standard]==0.34.0
+pydantic==2.10.4
+python-multipart==0.0.20
+aiofiles==24.1.0
+sse-starlette==2.2.1
+openai==1.59.7
+zstandard==0.25.0

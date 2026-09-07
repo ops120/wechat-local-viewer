@@ -1,0 +1,24 @@
+# 行尾与二进制规范
+* text=auto
+
+# Windows 批处理必须 CRLF
+*.bat text eol=crlf
+
+# Windows 二进制
+*.png binary
+*.db binary
+*.dat binary
+
+# 源码统一 LF
+*.py text eol=lf
+*.ts text eol=lf
+*.vue text eol=lf
+*.js text eol=lf
+*.mjs text eol=lf
+*.css text eol=lf
+*.html text eol=lf
+*.json text eol=lf
+*.md text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf
+*.sh text eol=lf
