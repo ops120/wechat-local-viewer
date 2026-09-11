@@ -1,5 +1,5 @@
 <template>
-  <div ref="scrollerRef" class="flex-1 overflow-y-auto bg-gray-100" @scroll="onScroll">
+  <div ref="scrollerRef" class="chat-scroller flex-1 overflow-y-auto bg-gray-100" @scroll="onScroll">
     <div class="py-2">
       <div v-if="loadingMore" class="text-center py-2 text-gray-400 text-xs">加载中...</div>
       <div v-else-if="messages.length < total && messages.length > 0" class="text-center py-2 text-gray-400 text-xs">↑ 滚动加载更多</div>

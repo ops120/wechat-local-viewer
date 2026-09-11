@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 z-40" @click="close">
     <div
-      class="absolute top-20 left-1/2 -translate-x-1/2 w-[600px] max-w-[90vw] bg-white rounded-lg shadow-xl"
+      class="panel-sheet absolute top-20 left-1/2 -translate-x-1/2 w-[600px] max-w-[90vw] bg-white rounded-lg shadow-xl"
       @click.stop
     >
       <!-- 搜索输入 -->

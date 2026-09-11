@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 z-40" @click="close">
     <div
-      class="absolute top-20 right-4 w-[500px] max-w-[90vw] bg-white rounded-lg shadow-xl"
+      class="panel-sheet absolute top-20 right-4 w-[500px] max-w-[90vw] bg-white rounded-lg shadow-xl"
       @click.stop
     >
       <!-- 设置头部 -->

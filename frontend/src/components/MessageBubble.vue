@@ -1,16 +1,16 @@
 <template>
-  <div class="message-bubble px-4 py-2" :class="message.is_self === 1 ? 'flex justify-end' : 'flex justify-start'">
+  <div class="message-bubble px-4 py-2" :class="message.is_self === 1 ? 'flex justify-end bubble-self' : 'flex justify-start bubble-other'">
     <!-- 头像 -->
     <div
       v-if="message.is_self !== 1"
-      class="w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
+      class="avatar w-8 h-8 bg-gray-400 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
     >
       {{ (message.sender_display_name || '未知').charAt(0) }}
     </div>
 
     <!-- 消息内容 -->
     <div
-      class="max-w-[60%] mx-2 px-3 py-2 rounded-lg shadow-sm"
+      class="bubble max-w-[60%] mx-2 px-3 py-2 rounded-lg shadow-sm"
       :class="message.is_self === 1 ? 'bg-green-200' : 'bg-white'"
     >
       <!-- 发送者名称 -->
@@ -88,7 +88,7 @@
     <!-- 自己的头像 -->
     <div
       v-if="message.is_self === 1"
-      class="w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
+      class="avatar w-8 h-8 bg-green-500 rounded-lg flex items-center justify-center text-white text-sm font-bold shrink-0"
     >
       我
     </div>

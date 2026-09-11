@@ -7,7 +7,7 @@
   >
     <!-- 头像 -->
     <div
-      class="w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0"
+      class="avatar w-12 h-12 rounded-lg flex items-center justify-center text-white font-bold text-lg shrink-0"
       :class="isRoom ? 'bg-green-500' : isGh ? 'bg-blue-400' : 'bg-gray-300'"
     >
       {{ session.display_name.charAt(0) }}

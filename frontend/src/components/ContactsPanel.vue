@@ -1,7 +1,7 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 z-40" @click="close">
     <div
-      class="absolute top-20 left-1/2 -translate-x-1/2 w-[700px] max-w-[90vw] max-h-[80vh] bg-white rounded-lg shadow-xl flex flex-col"
+      class="panel-sheet absolute top-20 left-1/2 -translate-x-1/2 w-[700px] max-w-[90vw] max-h-[80vh] bg-white rounded-lg shadow-xl flex flex-col"
       @click.stop
     >
       <!-- 头部 -->

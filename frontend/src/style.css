@@ -14,3 +14,23 @@ html, body, #app {
   -webkit-box-orient: vertical;
   overflow: hidden;
 }
+
+/* 皮肤开关：窄屏只留图标，避免多个主题选项把顶栏挤爆 */
+@media (max-width: 1000px) {
+  .theme-switch-text { display: none; }
+}
+
+/* 顶栏标题永不换行：皮肤可能使用更宽的中文标题字体，换行会把标题挤成两行并被裁掉 */
+.app-title {
+  white-space: nowrap;
+}
+.app-title-sub {
+  white-space: nowrap;
+}
+/* 空间不够时逐级让位：先隐藏副标题，再缩小主标题 */
+@media (max-width: 1180px) {
+  .app-title-sub { display: none; }
+}
+@media (max-width: 900px) {
+  .app-title { font-size: 16px; }
+}

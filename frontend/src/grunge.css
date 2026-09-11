@@ -1,0 +1,415 @@
+/* ============================================================================
+   垃圾摇滚主题（Grunge）—— 1990s Seattle 影印志 / 拼贴海报质感
+   ----------------------------------------------------------------------------
+   仅当 <html> 上存在 .theme-grunge 时生效，默认浅色皮肤完全不受影响。
+   设计基调：炭黑脏旧的底子 + 泛黄影印纸 + 铁锈红/酸黄/苔绿点缀，
+             粗糙不规则圆角、错版印刷标题、颗粒噪点、胶带与划痕。
+   ============================================================================ */
+
+/* ---------------------------------------------------------------------------
+   1. 色板
+   --------------------------------------------------------------------------- */
+html.theme-grunge {
+  --gr-bg:       #14120f;
+  --gr-bg-2:     #1b1712;
+  --gr-panel:    #241f18;
+  --gr-panel-2:  #2e271e;
+  --gr-line:     #4a4136;
+  --gr-paper:    #d4ccb4;
+  --gr-paper-2:  #c4bb9f;
+  --gr-ink:      #1a1713;
+  --gr-rust:     #a8402a;
+  --gr-acid:     #c2b23f;
+  --gr-moss:     #77854a;
+  --gr-cyan:     #4f7f8a;
+  --gr-text:     #ded6c0;
+  --gr-text-dim: #9a917b;
+  --gr-noise: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='260' height='260'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.82' numOctaves='4' stitchTiles='stitch'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='260' height='260' filter='url(%23n)' opacity='0.6'/%3E%3C/svg%3E");
+  --gr-scratch: repeating-linear-gradient(93deg, rgba(255, 255, 255, .05) 0 1px, transparent 1px 6px);
+  color-scheme: dark;
+}
+
+/* ---------------------------------------------------------------------------
+   2. 基础
+   --------------------------------------------------------------------------- */
+html.theme-grunge body {
+  background-color: var(--gr-bg);
+  color: var(--gr-text);
+  font-family: "Helvetica Neue", "Microsoft YaHei", "PingFang SC", Arial, sans-serif;
+}
+
+html.theme-grunge h1,
+html.theme-grunge h2,
+html.theme-grunge h3,
+html.theme-grunge h4 {
+  font-family: Georgia, "STZhongsong", "Songti SC", SimSun, serif;
+  letter-spacing: .05em;
+}
+
+html.theme-grunge ::selection {
+  background: var(--gr-acid);
+  color: #16130f;
+}
+
+html.theme-grunge ::-webkit-scrollbar { width: 12px; height: 12px; }
+html.theme-grunge ::-webkit-scrollbar-track { background: #12100d; }
+html.theme-grunge ::-webkit-scrollbar-thumb {
+  background: #4d4335;
+  border: 2px solid #12100d;
+  border-radius: 2px 8px 2px 8px;
+}
+html.theme-grunge ::-webkit-scrollbar-thumb:hover { background: var(--gr-rust); }
+
+/* 新式滚动条属性：覆盖所有可滚动容器（Chromium 会优先用这两个，忽略上面的 -webkit- 规则） */
+html.theme-grunge [class*="overflow-y-auto"],
+html.theme-grunge [class*="overflow-auto"] {
+  scrollbar-width: thin;
+  scrollbar-color: #55492f #14110d;
+}
+
+/* ---------------------------------------------------------------------------
+   3. Tailwind 颜色工具类重映射（默认面色 = 深色镀铬层）
+   --------------------------------------------------------------------------- */
+/* 带透明度后缀的 .bg-white（如灯箱关闭按钮）保持半透明，不做覆盖。
+   用 :where() 把 :not() 的权重清零，这样后面的结构钩子（.app-nav 等）能正常覆盖它 */
+html.theme-grunge .bg-white:where(:not([class*="bg-opacity"])) { background-color: var(--gr-paper); color: var(--gr-ink); }
+html.theme-grunge .bg-gray-100 { background-color: #221d17; }
+html.theme-grunge .bg-gray-50  { background-color: #1d1913; }
+html.theme-grunge .bg-gray-200 { background-color: #322b22; }
+html.theme-grunge .bg-gray-300 { background-color: #6d6555; }
+html.theme-grunge .bg-gray-400 { background-color: #57503f; }
+
+html.theme-grunge .hover\:bg-gray-200:hover { background-color: #3a3227; }
+html.theme-grunge .hover\:bg-gray-50:hover  { background-color: #2b241c; }
+html.theme-grunge .hover\:bg-gray-100:hover { background-color: #3a3227; }
+
+html.theme-grunge .text-gray-800 { color: #e6dfc9; }
+html.theme-grunge .text-gray-700 { color: #d5cbb2; }
+html.theme-grunge .text-gray-600 { color: #bdb39a; }
+html.theme-grunge .text-gray-500 { color: #a89e86; }
+html.theme-grunge .text-gray-400 { color: #8d8470; }
+html.theme-grunge .hover\:text-gray-600:hover { color: #e6dfc9; }
+
+html.theme-grunge .border,
+html.theme-grunge .border-b,
+html.theme-grunge .border-t,
+html.theme-grunge .border-r,
+html.theme-grunge .border-l { border-color: var(--gr-line); }
+html.theme-grunge .border-gray-100,
+html.theme-grunge .border-gray-200,
+html.theme-grunge .border-gray-300 { border-color: #423a2e; }
+
+/* 强调色：铁锈红（动作） / 苔绿（头像） / 酸黄（焦点） */
+html.theme-grunge .bg-green-500 { background-color: var(--gr-rust); }
+html.theme-grunge div.bg-green-500.avatar { background-color: var(--gr-moss); }
+html.theme-grunge .hover\:bg-green-600:hover { background-color: #8d3320; }
+html.theme-grunge .bg-green-300 { opacity: .7; }
+html.theme-grunge .bg-green-200 { background-color: #c9bd7c; color: #231f14; }
+html.theme-grunge .bg-green-100 { background-color: #3b4527; }
+html.theme-grunge .bg-green-50  { background-color: #2b2619; }
+html.theme-grunge .text-green-700 { color: #cdc27a; }
+html.theme-grunge .border-green-500 { border-color: var(--gr-rust); }
+
+html.theme-grunge .bg-blue-400 { background-color: var(--gr-cyan); }
+html.theme-grunge .bg-blue-100 { background-color: #2c4349; }
+html.theme-grunge .bg-blue-50  { background-color: #232019; }
+html.theme-grunge .text-blue-700 { color: #a8cbd2; }
+html.theme-grunge .text-blue-600 { color: #8fbcc6; }
+html.theme-grunge .hover\:text-blue-600:hover { color: #b9dde5; }
+
+html.theme-grunge .text-red-500 { color: #e07a5f; }
+html.theme-grunge .hover\:text-red-600:hover { color: #f09b83; }
+html.theme-grunge .text-yellow-600 { color: #d6c34c; }
+
+html.theme-grunge .disabled\:bg-gray-300:disabled { background-color: #3a3227; }
+html.theme-grunge .focus\:ring-green-500:focus { --tw-ring-color: var(--gr-acid); }
+
+/* 表单控件：泛黄影印纸 + 打字机字体 */
+html.theme-grunge input,
+html.theme-grunge select,
+html.theme-grunge textarea,
+html.theme-grunge input.bg-gray-100,
+html.theme-grunge select.bg-gray-100,
+html.theme-grunge textarea.bg-gray-100 {
+  background-color: #ece5d2;
+  color: var(--gr-ink);
+  border: 1px solid #8b8270;
+  border-radius: 2px 7px 3px 6px;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  letter-spacing: .02em;
+}
+html.theme-grunge input::placeholder { color: #7a7059; }
+html.theme-grunge select option { background-color: #ece5d2; color: var(--gr-ink); }
+
+/* 按钮：深色贴纸块 + 不规则圆角 + 大写字母 */
+html.theme-grunge button.bg-gray-100 {
+  background-color: #262019;
+  color: var(--gr-text);
+  border: 1px solid var(--gr-line);
+  border-radius: 2px 9px 3px 8px / 8px 3px 9px 2px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+}
+html.theme-grunge button.bg-gray-100:hover {
+  background-color: #3a3227;
+  color: #fff8e6;
+}
+html.theme-grunge button.bg-green-500 {
+  background-color: var(--gr-rust);
+  color: #fdf6e6;
+  border: 1px solid #6d2517;
+  border-radius: 2px 9px 3px 8px / 8px 3px 9px 2px;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  box-shadow: 2px 2px 0 rgba(0, 0, 0, .55);
+}
+html.theme-grunge button.bg-green-500:hover { background-color: #8d3320; }
+html.theme-grunge button.bg-green-500:active { box-shadow: none; transform: translate(1px, 1px); }
+
+/* ---------------------------------------------------------------------------
+   4. 皮肤切换开关（两种皮肤下都要好看）
+   --------------------------------------------------------------------------- */
+.theme-switch {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 2px;
+  border-radius: 10px;
+  background: #f3f4f6;
+  border: 1px solid #e5e7eb;
+}
+.theme-switch-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 8px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.2;
+  color: #6b7280;
+  transition: background .15s ease, color .15s ease;
+  white-space: nowrap;
+}
+.theme-switch-btn:hover { background: #e5e7eb; color: #374151; }
+.theme-switch-btn.is-active { background: #fff; color: #111827; box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+.theme-switch-icon { font-size: 13px; line-height: 1; }
+
+html.theme-grunge .theme-switch {
+  background: #171410;
+  border: 1px dashed var(--gr-line);
+  border-radius: 2px 9px 3px 8px;
+}
+html.theme-grunge .theme-switch-btn {
+  color: #8f8672;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+html.theme-grunge .theme-switch-btn:hover { background: #2a241c; color: var(--gr-text); }
+html.theme-grunge .theme-switch-btn.is-active {
+  background: var(--gr-rust);
+  color: #f7f1e0;
+  box-shadow: inset 0 0 0 1px #621f13, 2px 2px 0 rgba(0, 0, 0, .55);
+}
+
+/* ---------------------------------------------------------------------------
+   5. 结构：外框 / 噪点 / 暗角（放在工具类之后，同权重时后者生效）
+   --------------------------------------------------------------------------- */
+html.theme-grunge .app-shell {
+  background-color: var(--gr-bg);
+  position: relative;
+}
+html.theme-grunge .app-shell::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  pointer-events: none;
+  background-image: var(--gr-noise);
+  opacity: .40;
+  mix-blend-mode: soft-light;
+}
+html.theme-grunge .app-shell::before {
+  content: "";
+  position: fixed;
+  inset: 0;
+  z-index: 49;
+  pointer-events: none;
+  background: radial-gradient(125% 105% at 50% 38%, transparent 44%, rgba(0, 0, 0, .58) 100%);
+}
+
+/* 顶栏：炭黑贴纸 + 错版印刷标题 + 划痕 */
+html.theme-grunge .app-nav {
+  background-color: #17130f;
+  background-image: var(--gr-noise);
+  border-bottom: 1px solid #0b0907;
+  box-shadow: 0 3px 0 0 rgba(168, 64, 42, .6), 0 12px 24px -14px #000;
+  position: relative;
+  z-index: 51;
+  color: var(--gr-text);
+}
+html.theme-grunge .app-nav::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background-image: var(--gr-scratch);
+  opacity: .65;
+}
+html.theme-grunge .app-nav .app-title {
+  font-family: Georgia, "STZhongsong", "Songti SC", SimSun, serif;
+  color: #f0e9d4;
+  letter-spacing: .14em;
+  text-shadow:
+    1px 0 0 rgba(168, 64, 42, .6),
+    -1px 0 0 rgba(79, 127, 138, .5),
+    0 1px 2px rgba(0, 0, 0, .7);
+  transform: rotate(-.5deg);
+}
+html.theme-grunge .app-nav .app-title-sub {
+  color: #8d8470;
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  letter-spacing: .24em;
+  text-transform: uppercase;
+}
+html.theme-grunge .app-nav .bg-gray-100 { background-color: #241e17; }
+html.theme-grunge .app-nav .text-gray-800 { color: #e6dfc9; }
+
+/* 会话列表：黑纸封面 */
+html.theme-grunge .app-sidebar {
+  background-color: #1b1712;
+  background-image: var(--gr-noise);
+  border-right: 2px solid #0b0907;
+  box-shadow: inset -16px 0 28px -20px #000;
+  color: var(--gr-text);
+}
+
+/* 聊天区外框 */
+html.theme-grunge .app-chat {
+  background-color: var(--gr-bg-2);
+}
+
+/* 聊天头部 */
+html.theme-grunge .chat-header {
+  background-color: #1e1a14;
+  border-bottom: 1px solid #0b0907;
+  box-shadow: 0 2px 0 0 rgba(0, 0, 0, .65), 0 10px 22px -16px #000;
+  color: var(--gr-text);
+}
+html.theme-grunge .chat-header .text-gray-800 { color: #f0e9d4; }
+html.theme-grunge .chat-header .text-gray-500 { color: #b3a98e; }
+html.theme-grunge .chat-header .text-gray-400 { color: #9a917b; }
+
+/* 导出面板 */
+html.theme-grunge .export-panel {
+  background-color: #241f18;
+  border-bottom: 1px solid #0b0907;
+  color: var(--gr-text);
+}
+html.theme-grunge .export-panel .text-gray-600 { color: #bdb39a; }
+html.theme-grunge .export-panel .text-gray-400 { color: #9a917b; }
+html.theme-grunge .export-panel .border-gray-300 { border-color: var(--gr-line); }
+html.theme-grunge .export-panel button.bg-gray-100 {
+  background-color: #2c251c;
+  color: var(--gr-text);
+}
+
+/* LLM 输入条 */
+html.theme-grunge .llm-bar {
+  background-color: #1b1712;
+  border-top: 1px solid #0b0907;
+  color: var(--gr-text);
+}
+html.theme-grunge .llm-bar .bg-gray-50 { background-color: #241f18; }
+
+/* 消息流：泛黄影印纸 + 淡淡的横格线 + 咖啡渍 */
+html.theme-grunge .chat-scroller {
+  background-color: #b8b098;
+  background-image:
+    linear-gradient(rgba(60, 48, 25, .055) 1px, transparent 1px),
+    radial-gradient(150% 65% at 8% -5%, rgba(120, 88, 38, .22), transparent 62%),
+    radial-gradient(130% 60% at 95% 105%, rgba(88, 58, 22, .18), transparent 58%),
+    var(--gr-noise);
+  background-size: 100% 30px, 100% 100%, 100% 100%, 260px 260px;
+  color: #332d24;
+}
+html.theme-grunge .chat-scroller .text-gray-400 { color: #6b614c; }
+
+/* 气泡：撕纸块 */
+html.theme-grunge .bubble {
+  border-radius: 2px 12px 3px 11px / 11px 3px 12px 2px;
+  box-shadow: 1px 2px 0 rgba(0, 0, 0, .45), 0 0 0 1px rgba(0, 0, 0, .32), inset 0 0 34px rgba(120, 95, 45, .12);
+  transform: rotate(-.35deg);
+}
+html.theme-grunge .bubble-other .bubble { background-color: var(--gr-paper); color: var(--gr-ink); }
+html.theme-grunge .bubble-self .bubble {
+  background-color: #c9bd7c;
+  color: #231f14;
+  transform: rotate(.35deg);
+  box-shadow: 1px 2px 0 rgba(0, 0, 0, .45), 0 0 0 1px rgba(60, 45, 15, .4), inset 0 0 34px rgba(110, 85, 30, .16);
+}
+html.theme-grunge .bubble .text-gray-800 { color: #1a1713; }
+html.theme-grunge .bubble .text-gray-700 { color: #332d24; }
+html.theme-grunge .bubble .text-gray-600 { color: #443c2f; }
+html.theme-grunge .bubble .text-gray-500 { color: #5a5140; }
+html.theme-grunge .bubble .text-gray-400 { color: #6f6550; }
+html.theme-grunge .bubble .bg-gray-100 { background-color: #c9c1a6; }
+html.theme-grunge .bubble .border-gray-300 { border-color: #9b9276; }
+html.theme-grunge .bubble .text-xs {
+  font-family: ui-monospace, Consolas, "Courier New", monospace;
+  letter-spacing: .05em;
+}
+html.theme-grunge .bubble .rounded-lg { border-radius: 2px 8px 3px 7px; }
+
+/* 弹层：贴在桌子上的影印纸 + 胶带 */
+html.theme-grunge .panel-sheet {
+  background-color: var(--gr-paper);
+  background-image: var(--gr-noise);
+  color: var(--gr-ink);
+  border: 1px solid #6f6650;
+  border-radius: 3px 14px 4px 13px / 13px 4px 14px 3px;
+  box-shadow: 7px 8px 0 rgba(0, 0, 0, .55), 0 0 0 1px rgba(0, 0, 0, .45), inset 0 0 80px rgba(120, 95, 50, .18);
+  transform: rotate(-.5deg);
+}
+/* 注意：不要在这里写 position —— 面板靠 Tailwind 的 .absolute 定位，
+   写了 position 会把它顶掉，面板就会跑到左上角去。::before 会以它（absolute）为定位基准。 */
+html.theme-grunge .panel-sheet::before {
+  content: "";
+  position: absolute;
+  top: -13px;
+  left: 30px;
+  width: 104px;
+  height: 26px;
+  background: rgba(228, 216, 178, .55);
+  border-left: 1px dashed rgba(120, 105, 70, .5);
+  border-right: 1px dashed rgba(120, 105, 70, .5);
+  transform: rotate(-3.5deg);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, .3);
+  pointer-events: none;
+}
+html.theme-grunge .panel-sheet,
+html.theme-grunge .panel-sheet .text-gray-800 { color: var(--gr-ink); }
+html.theme-grunge .panel-sheet .text-gray-700 { color: #332d24; }
+html.theme-grunge .panel-sheet .text-gray-600 { color: #443c2f; }
+html.theme-grunge .panel-sheet .text-gray-500 { color: #5a5140; }
+html.theme-grunge .panel-sheet .text-gray-400 { color: #6f6550; }
+html.theme-grunge .panel-sheet .border-gray-200,
+html.theme-grunge .panel-sheet .border-gray-100 { border-color: #a89f86; }
+html.theme-grunge .panel-sheet .bg-gray-50 { background-color: #c8c0a6; }
+html.theme-grunge .panel-sheet .bg-gray-100 { background-color: #e6dfc9; }
+html.theme-grunge .panel-sheet .hover\:bg-gray-50:hover { background-color: #c8c0a6; }
+html.theme-grunge .panel-sheet .text-blue-600:hover,
+html.theme-grunge .panel-sheet .text-blue-600 { color: #35606b; }
+html.theme-grunge .panel-sheet .text-gray-400.hover\:text-gray-600:hover { color: #2b2519; }
+
+/* 小屏：收窄顶栏的皮肤开关 */
+@media (max-width: 720px) {
+  .theme-switch-text { display: none; }
+}

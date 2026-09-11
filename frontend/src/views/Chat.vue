@@ -1,9 +1,9 @@
 <template>
   <div class="flex-1 flex flex-col overflow-hidden">
     <!-- 聊天头部 -->
-    <div class="bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
+    <div class="chat-header bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between">
       <div v-if="sessionStore.currentSession" class="flex items-center space-x-3 flex-1 min-w-0">
-        <div class="w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
+        <div class="avatar w-10 h-10 bg-green-500 rounded-lg flex items-center justify-center text-white font-bold shrink-0">
           {{ (sessionStore.currentSession.display_name || '?').charAt(0) }}
         </div>
         <div class="min-w-0">
@@ -30,7 +30,7 @@
     </div>
 
     <!-- 导出面板 -->
-    <div v-if="showExport" class="bg-white border-b border-gray-200 p-3 space-y-2 shrink-0">
+    <div v-if="showExport" class="export-panel bg-white border-b border-gray-200 p-3 space-y-2 shrink-0">
       <div class="flex items-center gap-2 text-sm">
         <label class="text-gray-600">日期：</label>
         <input v-model="exportDate" type="date"
