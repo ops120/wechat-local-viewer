@@ -55,6 +55,7 @@ import { ref, computed } from 'vue'
 import { apiClient } from '../api/client'
 import { useSessionStore } from '../stores/session'
 import { useSettingsStore } from '../stores/settings'
+import { isOrcaProvider } from '../orcarouter/provider'
 import type { LLMChatRequest } from '../api/types'
 
 const sessionStore = useSessionStore()
@@ -66,9 +67,11 @@ const streaming = ref(false)
 const error = ref('')
 
 const hasLLMConfig = computed(() => {
-  return !!(settingsStore.llmConfig.base_url &&
-            settingsStore.llmConfig.api_key &&
-            settingsStore.llmConfig.model)
+  const config = settingsStore.llmConfig
+  // OrcaRouter supplies its credential and base URL on the backend, so only a
+  // model selection is required in the browser.
+  if (isOrcaProvider(config.provider)) return !!config.model
+  return !!(config.base_url && config.api_key && config.model)
 })
 
 async function sendPrompt() {
@@ -80,6 +83,7 @@ async function sendPrompt() {
     base_url: settingsStore.llmConfig.base_url,
     api_key: settingsStore.llmConfig.api_key,
     model: settingsStore.llmConfig.model,
+    provider: settingsStore.llmConfig.provider,
   }
 
   streaming.value = true

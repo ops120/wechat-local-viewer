@@ -46,11 +46,12 @@ async def health_check():
 
 
 # 导入 API 路由
-from .api import sessions, messages, search, llm, admin, contacts, export
+from .api import sessions, messages, search, llm, admin, contacts, export, orcarouter
 app.include_router(sessions.router, prefix="/api/sessions")
 app.include_router(messages.router, prefix="/api/messages")
 app.include_router(search.router, prefix="/api/search")
 app.include_router(llm.router, prefix="/api/llm")
+app.include_router(orcarouter.router, prefix="/api/orcarouter")
 app.include_router(admin.router, prefix="/api/admin")
 app.include_router(contacts.router, prefix="/api/contacts")
 app.include_router(export.router, prefix="/api")

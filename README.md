@@ -198,6 +198,15 @@ decrypted/  （或 .decrypted/，二选一自动识别）
 | `/api/admin/stats/daily` | GET | 每日统计 |
 | `/api/llm/config` | GET / POST | LLM 配置 |
 | `/api/llm/chat` | POST | LLM 流式问答（SSE） |
+| `/api/orcarouter/status` | GET | OrcaRouter provider / 凭据状态（脱敏） |
+| `/api/orcarouter/credentials` | POST / DELETE | 保存 / 清除 API Key |
+| `/api/orcarouter/credentials/active` | POST | 切换当前使用的认证方式 |
+| `/api/orcarouter/models` | GET | 按能力过滤的模型目录（只返回元数据） |
+| `/api/orcarouter/models/refresh` | POST | 强制刷新目录 |
+| `/api/orcarouter/connect/start` | POST | 发起 PKCE 授权，返回授权链接 |
+| `/api/orcarouter/connect/status` | GET | 当前授权进度 |
+| `/api/orcarouter/connect/exchange` | POST | 用授权码换取 API Key |
+| `/api/orcarouter/connect/cancel` | POST | 取消进行中的授权 |
 | `/media/...` | GET | 媒体静态文件（仅已还原的部分图片可用） |
 
 ## LLM 配置（可选）
@@ -214,11 +223,54 @@ decrypted/  （或 .decrypted/，二选一自动识别）
 
 API key 仅存浏览器 `localStorage`，随每次问答请求发给后端（也可用环境变量 `LLM_BASE_URL` / `LLM_API_KEY` / `LLM_MODEL` 做后备默认值）。未配置时点「总结」会给出明确提示。
 
+## OrcaRouter（可选，具名 provider）
+
+在「设置 → Provider」里选择 **OrcaRouter**，它作为一个具名 provider 出现，而不是让你自己拼 Base URL。
+推理与模型目录固定走 `https://api.orcarouter.ai/v1`（认证走另一个 origin：`https://www.orcarouter.ai`）。
+
+提供两种并列的接入方式，任选其一即可：
+
+| 方式 | Provider | 说明 |
+|---|---|---|
+| **API Key** | `OrcaRouter - API` | 直接粘贴已有的 `sk-orca-…` Key，或用环境变量 `ORCA_API_KEY` |
+| **Auth 登录** | `OrcaRouter - Auth` | 通过 OAuth 2.0 + PKCE 授权，由 OrcaRouter 签发同一个 `sk-orca-…` Key |
+
+两种方式最终都只产生同一个普通 API Key：计费与撤销都归你自己的 OrcaRouter 账号
+（撤销入口：<https://www.orcarouter.ai/console/authorized-apps>）。Key 只保存在本机后端
+（`.cache/orcarouter_credentials.json`，权限 0600），**不会**下发到浏览器，也不会写进日志或错误信息。
+
+### Auth 登录走的流程
+
+本机后端端口可配置（`WCVIEWER_PORT`）且常被局域网访问，没有可预测的回调地址，因此采用
+**Flow B（out-of-band 授权码）**：程序给出授权链接，你在浏览器里同意后，把页面上显示的授权码粘贴回来。
+始终使用 PKCE `S256`——即使有回调地址，用户也可能在同意页选择「显示授权码」。
+
+拿到的 Key 是**长效 Key，不是 refresh token**：会一直复用直到你在 OrcaRouter 撤销；
+上游返回 `401` 时只把发起该请求的那个账号/凭据标记为需要重新认证，不会伪造刷新，也不会静默删除旧 Key。
+
+### 模型选择
+
+选择 OrcaRouter 后，模型是一个从真实目录 `GET /v1/models` 生成的搜索下拉，**不需要手填模型名**。
+目录按入口能力过滤（文本 chat / 多模态 / embedding / 图片 / 视频 / rerank），只展示目录元数据能证明兼容的模型。
+目录不可用时会退回到一小份已验证的内置列表，并在下拉里明确标注「目录降级」。
+
+### 自建部署
+
+| 环境变量 | 作用 |
+|---|---|
+| `ORCA_BASE_URL` | 自建部署的共享 origin（auth 与 inference 同一个域名时用） |
+| `ORCA_AUTH_BASE_URL` | 单独指定认证 origin（优先级高于 `ORCA_BASE_URL`） |
+| `ORCA_API_BASE_URL` | 单独指定推理/目录 origin（优先级高于 `ORCA_BASE_URL`） |
+| `ORCA_API_KEY` | API Key 方式的后备默认值 |
+
+远程 origin 强制 HTTPS，`http://` 仅允许 loopback。
+
 ## 安全
 
 - **零外发**：除 LLM base_url 外无任何 outbound HTTP。
 - 静态 `/media/` 不列目录。
-- LLM API key 仅存浏览器 localStorage。
+- 通用 OpenAI 兼容 provider 的 LLM API key 仅存浏览器 localStorage。
+- OrcaRouter 的 Key 只存在本机后端 `.cache/orcarouter_credentials.json`（0600），不下发到浏览器。
 
 ## 性能预算
 

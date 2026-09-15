@@ -87,6 +87,11 @@ class LLMConfig(BaseModel):
     base_url: str = ""
     api_key: str = ""
     model: str = ""
+    # OrcaRouter: which named provider the selection belongs to, and which of
+    # its two credential methods is active. Empty provider = generic
+    # OpenAI-compatible endpoint, i.e. the original behaviour.
+    provider: str = ""
+    auth_method: str = ""
 
 
 class LLMChatRequest(BaseModel):
@@ -96,3 +101,4 @@ class LLMChatRequest(BaseModel):
     base_url: Optional[str] = None
     api_key: Optional[str] = None
     model: Optional[str] = None
+    provider: Optional[str] = None

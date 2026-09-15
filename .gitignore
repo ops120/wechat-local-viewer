@@ -65,3 +65,9 @@ export_*.csv
 export_*.json
 export_*.ndjson
 export_*.txt
+
+# OrcaRouter GUI evidence: orca-evidence/ is purely the output directory of
+# tools/gui-evidence/run_gui_evidence.py. The harness ships in the patch; the
+# screenshots and manifest it produces are run output, so the whole directory
+# stays untracked and nothing under it can ever be mistaken for shipped work.
+/orca-evidence/
