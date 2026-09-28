@@ -8,6 +8,8 @@ const DEFAULT_LLM: LLMConfig = {
   base_url: '',
   api_key: '',
   model: '',
+  provider: '',
+  auth_method: '',
 }
 
 function loadLLMConfig(): LLMConfig {

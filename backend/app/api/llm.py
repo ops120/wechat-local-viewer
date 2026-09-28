@@ -9,6 +9,7 @@ from ..llm.openai_compat import OpenAICompatClient
 from ..models import LLMConfig, LLMChatRequest
 from ..parsers.sender_resolver import resolve_display_name
 from ..parsers.chatroom_alias import get_chatroom_alias, load_chatroom_aliases
+from .orcarouter import prepare_orcarouter_provider, provider_is_orcarouter
 
 router = APIRouter()
 
@@ -23,6 +24,7 @@ async def get_llm_config():
         base_url=os.getenv("LLM_BASE_URL", ""),
         api_key=os.getenv("LLM_API_KEY", ""),
         model=os.getenv("LLM_MODEL", ""),
+        provider=os.getenv("LLM_PROVIDER", ""),
     )
 
 
@@ -40,6 +42,9 @@ async def chat(request: LLMChatRequest):
 
     配置优先级：请求体自带（前端设置面板保存的）> 后端内存缓存 > 环境变量。
     之前只用后端 default_config，导致前端配了也不生效。
+
+    OrcaRouter 是 first-class provider：选中它时凭据来自凭据 seam
+    （手填 API Key 或 PKCE 登录），推理固定走 https://api.orcarouter.ai/v1。
     """
     if not request.session:
         raise HTTPException(status_code=400, detail="缺少会话参数")
@@ -49,9 +54,29 @@ async def chat(request: LLMChatRequest):
         raise HTTPException(status_code=400, detail="没有找到相关消息")
 
     import os
+    provider = request.provider or default_config.provider or os.getenv("LLM_PROVIDER", "")
     base_url = request.base_url or default_config.base_url or os.getenv("LLM_BASE_URL", "")
     api_key = request.api_key or default_config.api_key or os.getenv("LLM_API_KEY", "")
     model = request.model or default_config.model or os.getenv("LLM_MODEL", "")
+
+    system_prompt = (
+        "你是一个微信聊天记录分析助手。请根据提供的聊天记录回答用户的问题。"
+        "如果聊天记录不足以回答问题，请明确说明。回答要简洁、准确、客观。"
+    )
+
+    llm_messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": f"聊天记录：\n{messages_text}\n\n用户问题：{request.prompt}"},
+    ]
+
+    if provider_is_orcarouter(provider):
+        if not model:
+            raise HTTPException(
+                status_code=400,
+                detail="OrcaRouter 未选择模型：请在设置中从模型下拉里选择",
+            )
+        client, _config = prepare_orcarouter_provider(provider, model, api_key)
+        return _sse_response(client, llm_messages)
 
     if not base_url or not model:
         raise HTTPException(
@@ -64,19 +89,12 @@ async def chat(request: LLMChatRequest):
         api_key=api_key,
         model=model,
     )
+    return _sse_response(client, llm_messages)
 
-    system_prompt = (
-        "你是一个微信聊天记录分析助手。请根据提供的聊天记录回答用户的问题。"
-        "如果聊天记录不足以回答问题，请明确说明。回答要简洁、准确、客观。"
-    )
 
-    llm_messages = [
-        {"role": "system", "content": system_prompt},
-        {"role": "user", "content": f"聊天记录：\n{messages_text}\n\n用户问题：{request.prompt}"},
-    ]
-
+def _sse_response(client, messages: list) -> StreamingResponse:
     return StreamingResponse(
-        _stream_response(client, llm_messages),
+        _stream_response(client, messages),
         media_type="text/event-stream",
         headers={"Cache-Control": "no-cache", "Connection": "keep-alive"},
     )
@@ -128,8 +146,10 @@ def _collect_messages(request: LLMChatRequest) -> str:
         conn.close()
 
 
-async def _stream_response(client: OpenAICompatClient, messages: list):
+async def _stream_response(client, messages: list):
     """流式响应生成器（SSE 格式）"""
+    from ..llm.orcarouter import TerminalReauthError
+
     try:
         yield f"data: {json.dumps({'type': 'start'})}\n\n"
         for chunk in client.stream(messages):
@@ -137,5 +157,8 @@ async def _stream_response(client: OpenAICompatClient, messages: list):
                 yield f"data: {json.dumps({'type': 'content', 'content': chunk}, ensure_ascii=False)}\n\n"
                 await asyncio.sleep(0.01)
         yield f"data: {json.dumps({'type': 'end'})}\n\n"
+    except TerminalReauthError as e:
+        # 终态：凭据已被撤销，只标记发出该请求的账号/凭据代次，不做伪 refresh 重试。
+        yield f"data: {json.dumps({'type': 'error', 'code': 'needs_reauth', 'error': str(e)}, ensure_ascii=False)}\n\n"
     except Exception as e:
         yield f"data: {json.dumps({'type': 'error', 'error': str(e)}, ensure_ascii=False)}\n\n"

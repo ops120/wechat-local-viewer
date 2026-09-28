@@ -66,6 +66,10 @@ export interface LLMConfig {
   base_url: string
   api_key: string
   model: string
+  /** Named provider id. Empty = generic OpenAI-compatible endpoint. */
+  provider?: string
+  /** Which OrcaRouter credential method is active: 'api_key' | 'pkce'. */
+  auth_method?: string
 }
 
 export interface LLMChatRequest {
@@ -75,4 +79,7 @@ export interface LLMChatRequest {
   base_url?: string
   api_key?: string
   model?: string
+  provider?: string
 }
+
+export type { CredentialEntry, CredentialsSummary } from '../orcarouter/provider'

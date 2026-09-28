@@ -1,4 +1,4 @@
-from typing import Iterator
+from typing import Iterator, Optional
 from .base import LLMClient
 import openai
 
@@ -6,7 +6,13 @@ import openai
 class OpenAICompatClient(LLMClient):
     """OpenAI 兼容协议客户端"""
 
-    def __init__(self, base_url: str, api_key: str, model: str):
+    def __init__(
+        self,
+        base_url: str,
+        api_key: str,
+        model: str,
+        http_client: Optional[object] = None,
+    ):
         self.base_url = base_url
         self.api_key = api_key
         self.model = model
@@ -18,10 +24,14 @@ class OpenAICompatClient(LLMClient):
         if not model:
             raise ValueError("model 不能为空")
 
+        # ``http_client`` lets a caller that has its own transport policy (the
+        # OrcaRouter provider, see llm/orcarouter/net.py) hand one in. Callers
+        # that pass nothing keep the SDK's default client exactly as before.
         self.client = openai.OpenAI(
             base_url=base_url,
             api_key=api_key,
-            timeout=60.0
+            timeout=60.0,
+            **({"http_client": http_client} if http_client is not None else {}),
         )
 
     def stream(self, messages: list[dict]) -> Iterator[str]:
